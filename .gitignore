@@ -2,3 +2,4 @@ node_modules
 .dockerignore
 Dockerfile
 config/dev.js
+client
