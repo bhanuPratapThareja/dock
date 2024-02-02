@@ -1,0 +1,54 @@
+version: "24.0.7"
+services:
+
+  # MongoDB Service
+  mongo_db: 
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    ports:
+      - 2717:27017
+    volumes:
+      - mongo_db:/data/db
+
+   # Redis Core Service
+  redis_core: 
+    container_name: redis_container
+    image: redis:latest
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+
+  # Node API service
+  api:
+    build: .
+    container_name: node_container
+    ports:
+      - 4000:4000
+    environment:
+      - PORT=4000
+      - DB_NAME=shop
+    depends_on:
+      - mongo_db
+      - redis_core
+    volumes:
+      - .:/app/shop/backend
+      - /app/shop/backend/node_modules
+
+  # React JS Service
+  client:
+    build: ./client
+    container_name: react_container
+    ports: 
+      - 3000:3000
+    volumes:
+      - ./client:/app/shop/frontend
+      - /app/shop/frontend/node_modules
+
+
+volumes:
+  mongo_db: {}
+  redis_data:
+    external: false
